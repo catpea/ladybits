@@ -31,7 +31,6 @@ class StreamEmitter extends EventEmitter {
 
   constructor() {
     super();
-    Object.entries(operators).forEach(([method, fn]) => Object.defineProperty(this, method, { value: fn }));
   }
   emitValue(value) {
     this.emit("value", value);
@@ -63,6 +62,10 @@ export class ReactiveEmitter extends StreamEmitter {
 
   iterate(...argv) {
     return iterate(this, ...argv);
+  }
+
+  map(...argv) {
+    return map(this, ...argv);
   }
 
   filter(...argv) {
@@ -109,8 +112,6 @@ export class Signal {
   // NOTE: Re: test=v=>!v==undefined... null and undefined are considered equal when using the loose equality operator
 
   constructor(value, test = (v) => !v == undefined) {
-    Object.entries(operators).forEach(([method, fn]) => Object.defineProperty(this, method, { value: fn }));
-
     this.#value = value;
     this.#test = test;
     this.#subscribers = new Set();
@@ -139,7 +140,7 @@ export class Signal {
     for (const subscriber of this.#subscribers) subscriber(this.#value);
   }
 
-  static sid() { // generate signalID
+  static sid() { // Generate Signal ID
     const length = 12;
     const chars = "abcdefghijklmnopqrstuvwxyz";
     return [...Array(length)].map(() => chars[Math.floor(Math.random() * chars.length)]).join("");
@@ -151,6 +152,10 @@ export class ReactiveSignal extends Signal {
 
   iterate(...argv) {
     return iterate(this, ...argv);
+  }
+
+  map(...argv) {
+    return map(this, ...argv);
   }
 
   filter(...argv) {
@@ -197,6 +202,18 @@ function iterate(source) {
   source.subscribe((array) => {
     array.forEach((item) => result.emitValue(item));
   });
+  return result;
+}
+
+function map(source, predicate) {
+  const result = new ReactiveEmitter();
+  result.name = "filter";
+  result.source = source;
+
+  source.subscribe((value) => {
+    result.emitValue(predicate(value));
+  });
+
   return result;
 }
 
