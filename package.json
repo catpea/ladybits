@@ -1,6 +1,6 @@
 {
   "name": "ladybits",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Powerful Reactive Framework based on EventEmitter, Signals, and Object Stream Operators",
   "main": "index.js",
   "scripts": {
