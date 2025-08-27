@@ -1,6 +1,6 @@
 {
   "name": "ladybits",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Lightweight reactive library featuring autodependencies and state, derived and effect.",
   "main": "index.js",
   "scripts": {
